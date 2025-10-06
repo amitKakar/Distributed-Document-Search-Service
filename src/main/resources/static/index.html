@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Tenant Document Search</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Multi-Tenant Document Search</h1>
+        <div class="tenant-section">
+            <label for="tenantId">Tenant ID:</label>
+            <input type="text" id="tenantId" placeholder="Enter Tenant ID" />
+        </div>
+        <div id="healthStatus" class="health-status">Checking backend health...</div>
+    </header>
+    <main>
+        <section class="add-doc-section">
+            <h2>Add New Document</h2>
+            <form id="addDocForm">
+                <input type="text" id="docTitle" placeholder="Title" required />
+                <textarea id="docContent" placeholder="Content" required></textarea>
+                <button type="submit">Add Document</button>
+                <span class="loading" id="addDocLoading" style="display:none;">Adding...</span>
+            </form>
+            <div id="addDocMsg" class="msg"></div>
+        </section>
+        <section class="search-section">
+            <h2>Search Documents</h2>
+            <form id="searchForm">
+                <input type="text" id="searchQuery" placeholder="Search..." required />
+                <button type="submit">Search</button>
+                <span class="loading" id="searchLoading" style="display:none;">Searching...</span>
+            </form>
+            <div id="searchMsg" class="msg"></div>
+            <div id="pagination" class="pagination"></div>
+            <div id="results"></div>
+        </section>
+    </main>
+    <div id="docDetailModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closeDetail">&times;</span>
+            <div id="docDetail"></div>
+        </div>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
+

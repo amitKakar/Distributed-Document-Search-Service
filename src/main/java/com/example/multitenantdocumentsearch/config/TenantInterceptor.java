@@ -15,6 +15,11 @@ public class TenantInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String path = request.getRequestURI();
+        // Allow home and health endpoints without tenant header
+        if ("/".equals(path) || path.startsWith("/actuator/health")) {
+            return true;
+        }
         String tenantId = request.getHeader(TENANT_HEADER);
         if (tenantId == null || tenantId.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -31,4 +36,3 @@ public class TenantInterceptor implements HandlerInterceptor {
         TenantContext.clear(); // Clean up after request
     }
 }
-

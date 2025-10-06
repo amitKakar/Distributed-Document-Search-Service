@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -56,8 +57,15 @@ public class DocumentService {
         String tenantId = TenantContext.getTenantId();
         String cacheKey = buildCacheKey(tenantId, query, page, size);
         return searchCache.get(cacheKey, k -> {
+            // Use the correct repository method name
+            List<Document> results = documentRepository.searchDocuments(tenantId, query);
+            // Convert List<Document> to Page<Document> manually since repository returns List
             Pageable pageable = PageRequest.of(page, size);
-            return documentRepository.searchByTenantAndText(tenantId, query, pageable);
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), results.size());
+            return new org.springframework.data.domain.PageImpl<>(
+                results.subList(start, end), pageable, results.size()
+            );
         });
     }
 
@@ -93,4 +101,3 @@ public class DocumentService {
         searchCache.asMap().keySet().removeIf(key -> key.startsWith(tenantId + ":"));
     }
 }
-

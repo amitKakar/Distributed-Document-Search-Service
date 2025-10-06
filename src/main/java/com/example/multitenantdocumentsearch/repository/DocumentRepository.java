@@ -7,16 +7,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * Repository for Document entity with multi-tenant and text search support.
  */
 public interface DocumentRepository extends JpaRepository<Document, Long> {
     /**
      * Case-insensitive search for documents by tenant and query string in title or content.
-     * Uses PostgreSQL ILIKE for full-text search.
+     * Uses case-insensitive LIKE for full-text search (portable JPQL).
      */
-    @Query("SELECT d FROM Document d WHERE d.tenantId = :tenantId AND (d.title ILIKE %:query% OR d.content ILIKE %:query%)")
-    Page<Document> searchByTenantAndText(@Param("tenantId") String tenantId, @Param("query") String query, Pageable pageable);
+    @Query("SELECT d FROM Document d WHERE d.tenantId = :tenantId AND (LOWER(d.title) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(d.content) LIKE LOWER(CONCAT('%', :query, '%')))" )
+    List<Document> searchDocuments(@Param("tenantId") String tenantId, @Param("query") String query);
 
     /**
      * Find a document by id and tenantId (multi-tenancy enforcement).
@@ -28,4 +30,3 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
      */
     void deleteByIdAndTenantId(Long id, String tenantId);
 }
-
