@@ -119,3 +119,10 @@ MIT License
 ## Author
 Amit Kakar
 
+# Environment variables for local development
+# These can be set in your IDE, OS, or a .env file if supported
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=documents_db
+DB_USER=postgres
+DB_PASSWORD=postgres
