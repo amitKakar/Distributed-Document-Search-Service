@@ -62,7 +62,7 @@ public class DocumentController {
     public ResponseEntity<?> getDocument(@PathVariable Long id) {
         enforceRateLimit();
         Optional<Document> doc = documentService.getDocument(id);
-        return doc.map(ResponseEntity::ok)
+        return doc.<ResponseEntity<?>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResponse("Document not found for tenant")));
     }
@@ -105,6 +105,9 @@ public class DocumentController {
     @Data
     public static class ErrorResponse {
         private final String error;
+        public ErrorResponse(String error) {
+            this.error = error;
+        }
     }
 
     /**
@@ -115,4 +118,3 @@ public class DocumentController {
         public RateLimitExceededException(String message) { super(message); }
     }
 }
-
